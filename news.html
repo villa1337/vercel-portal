@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Portal - Villa1337</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0f0f23;
+            color: #cccccc;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            color: #00ff41;
+            text-shadow: 0 0 10px #00ff41;
+            margin-bottom: 0.5rem;
+        }
+
+        .back-btn {
+            background: #1a1a2e;
+            border: 2px solid #00ff41;
+            color: #00ff41;
+            padding: 0.5rem 1rem;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: #00ff41;
+            color: #1a1a2e;
+        }
+
+        .refresh-btn {
+            background: #1a1a2e;
+            border: 2px solid #00ff41;
+            color: #00ff41;
+            padding: 0.8rem 1.5rem;
+            font-family: inherit;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .refresh-btn:hover {
+            background: #00ff41;
+            color: #1a1a2e;
+        }
+
+        .news-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .news-item {
+            background: rgba(26, 26, 46, 0.9);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .news-item:hover {
+            border-color: #00ff41;
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.2);
+        }
+
+        .news-title {
+            color: #00ff41;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            text-decoration: none;
+            display: block;
+        }
+
+        .news-title:hover {
+            text-shadow: 0 0 5px #00ff41;
+        }
+
+        .news-meta {
+            color: #888;
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .loading {
+            text-align: center;
+            color: #888;
+            font-style: italic;
+        }
+
+        .error {
+            color: #ff4444;
+            text-align: center;
+            padding: 1rem;
+            background: rgba(255, 68, 68, 0.1);
+            border: 1px solid #ff4444;
+            border-radius: 5px;
+        }
+
+        .last-updated {
+            text-align: center;
+            color: #666;
+            font-size: 0.8rem;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="/" class="back-btn">← Back to Portal</a>
+            <h1 class="title">📰 News Portal</h1>
+            <button class="refresh-btn" onclick="loadNews()">🔄 Refresh News</button>
+        </div>
+
+        <div id="news-container">
+            <div class="loading">Loading latest news...</div>
+        </div>
+
+        <div class="last-updated" id="last-updated"></div>
+    </div>
+
+    <script>
+        async function loadNews() {
+            const container = document.getElementById('news-container');
+            const lastUpdated = document.getElementById('last-updated');
+            
+            container.innerHTML = '<div class="loading">Loading latest news...</div>';
+            
+            try {
+                const response = await fetch('/api/news');
+                const data = await response.json();
+                
+                if (data.success && data.articles) {
+                    container.innerHTML = '';
+                    
+                    if (data.articles.length === 0) {
+                        container.innerHTML = '<div class="error">No news articles found</div>';
+                        return;
+                    }
+                    
+                    const newsList = document.createElement('div');
+                    newsList.className = 'news-list';
+                    
+                    data.articles.forEach(article => {
+                        const item = document.createElement('div');
+                        item.className = 'news-item';
+                        
+                        item.innerHTML = `
+                            <a href="${article.link}" target="_blank" class="news-title">
+                                ${article.title}
+                            </a>
+                            <div class="news-meta">
+                                ${article.source} • ${article.pubDate}
+                            </div>
+                        `;
+                        
+                        newsList.appendChild(item);
+                    });
+                    
+                    container.appendChild(newsList);
+                    lastUpdated.textContent = `Last updated: ${new Date(data.lastUpdated).toLocaleString()}`;
+                } else {
+                    container.innerHTML = '<div class="error">Failed to load news</div>';
+                }
+            } catch (error) {
+                console.error('Error loading news:', error);
+                container.innerHTML = '<div class="error">Error loading news</div>';
+            }
+        }
+
+        // Load news on page load
+        window.addEventListener('load', loadNews);
+    </script>
+</body>
+</html>

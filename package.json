@@ -1,0 +1,13 @@
+{
+  "name": "vercel-portal",
+  "version": "1.0.0",
+  "description": "Portal for all Vercel apps with dynamic 4chan wallpapers",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vercel dev"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "vercel": "^33.0.0"
+  }
+}

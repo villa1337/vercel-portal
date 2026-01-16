@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Villa1337's Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0f0f23;
+            color: #cccccc;
+            min-height: 100vh;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            transition: background-image 0.5s ease-in-out;
+        }
+
+        .overlay {
+            background: rgba(15, 15, 35, 0.85);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .title {
+            font-size: 3rem;
+            color: #00ff41;
+            text-shadow: 0 0 10px #00ff41;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #888;
+        }
+
+        .controls {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .wallpaper-btn {
+            background: #1a1a2e;
+            border: 2px solid #00ff41;
+            color: #00ff41;
+            padding: 0.8rem 1.5rem;
+            font-family: inherit;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .wallpaper-btn:hover {
+            background: #00ff41;
+            color: #1a1a2e;
+            box-shadow: 0 0 15px #00ff41;
+        }
+
+        .apps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .app-card {
+            background: rgba(26, 26, 46, 0.9);
+            border: 2px solid #333;
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .app-card:hover {
+            border-color: #00ff41;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+            transform: translateY(-5px);
+        }
+
+        .app-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .app-name {
+            font-size: 1.5rem;
+            color: #00ff41;
+            margin-bottom: 0.5rem;
+        }
+
+        .app-description {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        .status {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(26, 26, 46, 0.9);
+            padding: 1rem;
+            border-radius: 5px;
+            border: 1px solid #333;
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        .loading {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2rem;
+            }
+            
+            .apps-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay">
+        <div class="container">
+            <div class="header">
+                <h1 class="title">Villa1337's Portal</h1>
+                <p class="subtitle">Your gateway to all deployed applications</p>
+            </div>
+
+            <div class="controls">
+                <button class="wallpaper-btn" onclick="changeWallpaper()">
+                    🎨 Change Wallpaper
+                </button>
+            </div>
+
+            <div class="apps-grid">
+                <a href="https://fractal-knowledge.vercel.app" class="app-card" target="_blank">
+                    <div class="app-icon">🧠</div>
+                    <div class="app-name">Fractal Knowledge</div>
+                    <div class="app-description">AI-powered knowledge management system</div>
+                </a>
+
+                <a href="https://ac-controller-redirect.vercel.app" class="app-card" target="_blank">
+                    <div class="app-icon">🎛️</div>
+                    <div class="app-name">AC Controller</div>
+                    <div class="app-description">IoT air conditioning control interface</div>
+                </a>
+
+                <a href="https://color-redirect.vercel.app" class="app-card" target="_blank">
+                    <div class="app-icon">🌈</div>
+                    <div class="app-name">Random Color</div>
+                    <div class="app-description">Dynamic color generation tool</div>
+                </a>
+
+                <a href="https://yt-summarizer-redirect.vercel.app" class="app-card" target="_blank">
+                    <div class="app-icon">📺</div>
+                    <div class="app-name">YT Summarizer</div>
+                    <div class="app-description">YouTube video summarization service</div>
+                </a>
+
+                <a href="https://notes-app-eight-self.vercel.app" class="app-card" target="_blank">
+                    <div class="app-icon">📝</div>
+                    <div class="app-name">Notes</div>
+                    <div class="app-description">Minimalist dark mode notes app</div>
+                </a>
+
+                <a href="/news.html" class="app-card">
+                    <div class="app-icon">📰</div>
+                    <div class="app-name">News Portal</div>
+                    <div class="app-description">Latest tech news and updates</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="status" id="status">
+        Ready • Wallpaper: Default
+    </div>
+
+    <script>
+        let isLoading = false;
+
+        async function changeWallpaper() {
+            if (isLoading) return;
+            
+            isLoading = true;
+            const btn = document.querySelector('.wallpaper-btn');
+            const status = document.getElementById('status');
+            
+            btn.textContent = '🔄 Loading...';
+            btn.classList.add('loading');
+            status.textContent = 'Fetching new wallpaper from /wg/...';
+
+            try {
+                console.log('Fetching wallpaper...');
+                const response = await fetch('/api/wallpaper');
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('Wallpaper data:', data);
+                
+                if (data.success && data.imageUrl) {
+                    console.log('Setting background to:', data.imageUrl);
+                    document.body.style.backgroundImage = `url("${data.imageUrl}")`;
+                    status.textContent = `Wallpaper updated • Thread: ${data.threadId}`;
+                } else {
+                    console.error('API returned error:', data);
+                    status.textContent = 'Failed to load wallpaper • Using default';
+                }
+            } catch (error) {
+                console.error('Error fetching wallpaper:', error);
+                status.textContent = `Error: ${error.message} • Using default`;
+            }
+
+            btn.textContent = '🎨 Change Wallpaper';
+            btn.classList.remove('loading');
+            isLoading = false;
+        }
+
+        // Load initial wallpaper
+        window.addEventListener('load', () => {
+            console.log('Page loaded, fetching initial wallpaper...');
+            setTimeout(changeWallpaper, 1000);
+        });
+    </script>
+</body>
+</html>
